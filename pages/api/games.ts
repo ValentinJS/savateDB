@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const queryCovers = games
     ? `where id = (${games
-        .map((g) => g.cover)
+        ?.map((g) => g.cover)
         .filter((c) => !!c)
         .join(',')});`
     : '';

@@ -40,7 +40,7 @@ export default function App() {
         <SimpleGrid cols={5} breakpoints={[{ maxWidth: 'xl', cols: 1 }]}>
           {!games
             ? 'Loading...'
-            : games.map((game) => (
+            : games?.map((game) => (
                 <BadgeCard
                   key={game.id}
                   image={`https://images.igdb.com/igdb/image/upload/t_cover_big/${
