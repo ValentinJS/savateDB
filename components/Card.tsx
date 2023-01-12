@@ -1,4 +1,6 @@
 import { Button, Card, createStyles, Group, Image, Text } from '@mantine/core';
+import { openModal } from '@mantine/modals';
+import { IGame } from '../types';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -17,15 +19,16 @@ interface BadgeCardProps {
   image?: string;
   title: string;
   description: string;
+  game: IGame;
 }
 
-export function BadgeCard({ image, title, description }: BadgeCardProps) {
+export function BadgeCard({ image, title, description, game }: BadgeCardProps) {
   const { classes } = useStyles();
 
   return (
     <Card withBorder radius="md" p="md" className={classes.card}>
       <Card.Section>
-        <Image src={image} alt={title} height={180} />
+        <Image src={image} alt={title} />
       </Card.Section>
 
       <Card.Section className={classes.section} mt="md">
@@ -40,7 +43,16 @@ export function BadgeCard({ image, title, description }: BadgeCardProps) {
       </Card.Section>
 
       <Group mt="xs">
-        <Button radius="md" style={{ flex: 1 }}>
+        <Button
+          radius="md"
+          style={{ flex: 1 }}
+          onClick={() => {
+            openModal({
+              title: 'Game details',
+              children: JSON.stringify(game),
+              size: 'xl',
+            });
+          }}>
           Show details
         </Button>
       </Group>

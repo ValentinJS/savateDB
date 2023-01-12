@@ -1,55 +1,54 @@
 import { Center, Group, Header, SimpleGrid, Text } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
-import { BadgeCard } from '../components/Card';
+import { ImageCard } from '../components/ImageCard';
 import { SearchInput } from '../components/Search';
+import { fetchGames } from '../lib/api';
 import { ICover, IGame } from '../types';
 
 export default function App() {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState<string>();
   const [games, setGames] = useState<IGame[]>();
   const [images, setImages] = useState<ICover[]>();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch('api/games', {
-      body: JSON.stringify({ query: search ? `search "${search}";` : '' }),
-      method: 'POST',
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setGames(data.games);
-        setImages(data.covers);
-      });
+    setLoading(search !== undefined);
+    fetchGames(search)
+      .then(({ games, covers }) => {
+        setGames(games);
+        setImages(covers);
+      })
+      .catch((error) => {
+        showNotification({ title: 'Error', message: error.message, color: 'red' });
+      })
+      .finally(() => setLoading(false));
   }, [search]);
-
-  const onSearch = (value: string) => {
-    if (value.length > 4) {
-      setSearch(value);
-    }
-  };
 
   return (
     <>
-      <Header height={70} p="md">
-        <Group sx={{ height: '100%' }} px={20} position="apart">
-          <Text size="sm">Awesome DB</Text>
-          <SearchInput onChange={onSearch} />
+      <Header height="auto" p="md">
+        <Group px={20} position="apart" sx={{ width: '1114px', margin: '0 auto' }}>
+          <Text size="md">Awesome DB</Text>
+          <SearchInput onChange={setSearch} loading={loading} />
         </Group>
       </Header>
 
       <Center sx={{ height: '100%' }}>
         <SimpleGrid cols={5} breakpoints={[{ maxWidth: 'xl', cols: 1 }]}>
-          {!games
-            ? 'Loading...'
-            : games?.map((game) => (
-                <BadgeCard
-                  key={game.id}
-                  image={`https://images.igdb.com/igdb/image/upload/t_cover_big/${
-                    images?.find((i) => i.game === game.id)?.image_id
-                  }.jpg`}
-                  title={game.name}
-                  description={game.summary}
-                />
-              ))}
+          {!games && 'Loading...'}
+          {games?.length === 0 && 'No games match your request'}
+          {games?.map((game) => (
+            <ImageCard
+              key={game.id}
+              image={`https://images.igdb.com/igdb/image/upload/t_cover_big/${
+                images?.find((i) => i.game === game.id)?.image_id
+              }.jpg`}
+              title={game.name}
+              description={game.summary}
+              game={game}
+            />
+          ))}
         </SimpleGrid>
       </Center>
     </>

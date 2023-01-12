@@ -1,4 +1,6 @@
 import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
+import { NotificationsProvider } from '@mantine/notifications';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { AppContainer } from '../components/AppContainer';
@@ -19,9 +21,13 @@ export default function App(props: AppProps) {
         theme={{
           colorScheme: 'dark',
         }}>
-        <AppContainer>
-          <Component {...pageProps} />
-        </AppContainer>
+        <NotificationsProvider>
+          <ModalsProvider>
+            <AppContainer>
+              <Component {...pageProps} />
+            </AppContainer>
+          </ModalsProvider>
+        </NotificationsProvider>
       </MantineProvider>
     </>
   );

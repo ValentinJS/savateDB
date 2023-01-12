@@ -5,14 +5,12 @@ export const AppContainer = ({ children }: any) => {
     <AppShell
       styles={{
         main: {
-          width: '100vw',
-          height: '100vh',
-          paddingLeft: '0px',
+          minHeight: '100vh',
         },
       }}
       fixed
       header={
-        <Header height={60} p="md">
+        <Header height="70" p="md">
           Awesome DB
         </Header>
       }>
