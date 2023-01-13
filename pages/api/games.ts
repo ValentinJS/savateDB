@@ -11,14 +11,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         return { games, covers: [] };
       }
 
-      const queryCovers = games
-        ? `where id = (${games
-            ?.map((g) => g.cover)
-            .filter((c) => !!c)
-            .join(',')});`
-        : '';
+      const ids = games.map((g) => g.cover);
 
-      return igdb.getCovers(queryCovers).then((covers) => ({ games, covers }));
+      return igdb.getCovers(ids).then((covers) => ({ games, covers }));
     })
     .then((data) => res.status(200).json(data))
     .catch((error) => {

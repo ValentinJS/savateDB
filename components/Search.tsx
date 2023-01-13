@@ -1,20 +1,19 @@
 import { Loader, TextInput } from '@mantine/core';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { useLoadingContext } from '../context/loading';
+import { SearchTerm, useSearchContext } from '../context/search';
 import useDebounce from '../hooks/debounce';
 
-interface IProps {
-  onChange: (v?: string) => void;
-  loading?: boolean;
-}
+export function SearchInput() {
+  const { search, setSearch } = useSearchContext();
+  const { loading } = useLoadingContext();
+  const [searchTerm, setSearchTerm] = useState<SearchTerm>(search);
 
-export function SearchInput({ onChange, loading }: IProps) {
-  const [searchTerm, setSearchTerm] = useState<string>();
-
-  const debouncedSearchTerm = useDebounce<string | undefined>(searchTerm, 500);
+  const debouncedSearchTerm = useDebounce<SearchTerm>(searchTerm, 500);
 
   useEffect(() => {
-    onChange(debouncedSearchTerm);
-  }, [debouncedSearchTerm, onChange]);
+    setSearch(debouncedSearchTerm);
+  }, [debouncedSearchTerm, setSearch]);
 
   return (
     <TextInput

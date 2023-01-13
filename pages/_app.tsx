@@ -4,6 +4,8 @@ import { NotificationsProvider } from '@mantine/notifications';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { AppContainer } from '../components/AppContainer';
+import { LoadingProvider } from '../context/loading';
+import { SearchProvider } from '../context/search';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -21,13 +23,17 @@ export default function App(props: AppProps) {
         theme={{
           colorScheme: 'dark',
         }}>
-        <NotificationsProvider>
-          <ModalsProvider>
-            <AppContainer>
-              <Component {...pageProps} />
-            </AppContainer>
-          </ModalsProvider>
-        </NotificationsProvider>
+        <SearchProvider>
+          <LoadingProvider>
+            <NotificationsProvider>
+              <ModalsProvider>
+                <AppContainer>
+                  <Component {...pageProps} />
+                </AppContainer>
+              </ModalsProvider>
+            </NotificationsProvider>
+          </LoadingProvider>
+        </SearchProvider>
       </MantineProvider>
     </>
   );

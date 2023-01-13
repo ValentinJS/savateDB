@@ -44,24 +44,26 @@ class GetToken {
     return fetch('https://api.igdb.com/v4/games', {
       headers: await this.getHeaders(),
       method: 'POST',
-      body: `${query ? `search "${query}";` : ''} fields *; where version_parent = null & parent_game = null${
-        !query ? '& rating > 96 & cover != null; sort first_release_date desc' : ''
+      body: `fields *; where version_parent = null & parent_game = null${
+        query ? `& name ~ *"${query}"*;` : '& rating > 96 & cover != null; sort first_release_date desc'
       };`,
     }).then((res) => {
       if (!res.ok) {
         throw new Error(
-          `Error calling IGDB '/games'${query ? ` with query '${query}'` : ''} ${res.status} ${res.statusText}`
+          `Error calling IGDB '/games'${query ? ` with query ${query}` : ''}: ${res.status} ${res.statusText}`
         );
       }
       return res.json();
     });
   }
 
-  public async getCovers(query?: string): Promise<ICover[]> {
+  public async getCovers(ids: number[]): Promise<ICover[]> {
+    const query = `where id = (${ids.filter((c) => !!c).join(',')});`;
+
     return fetch('https://api.igdb.com/v4/covers', {
       headers: await this.getHeaders(),
       method: 'POST',
-      body: `${query ? query : ''} fields *;`,
+      body: `${query} fields *;`,
     }).then((res) => {
       if (!res.ok) {
         throw `Error calling IGDB '/covers'${query ? ` with query ${query}` : ''}: ${res.status} ${res.statusText}`;
